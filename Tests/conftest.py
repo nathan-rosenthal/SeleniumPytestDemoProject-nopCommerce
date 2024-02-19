@@ -1,3 +1,5 @@
+import os
+
 import allure
 import pytest
 from selenium import webdriver
@@ -33,3 +35,16 @@ def pytest_exception_interact(report):
     if report.failed:
         allure.attach(body=driver.get_screenshot_as_png(), name="screenshot",
                       attachment_type=allure.attachment_type.PNG)
+
+
+@pytest.hookimpl()
+def pytest_sessionfinish() -> None:
+    environment_properties = {
+        'browser': driver.name,
+        'browser_version': driver.capabilities['browserVersion'],
+        'platform_name': driver.capabilities['platformName']
+    }
+    allure_env_path = os.path.join("allure-results", 'environment.properties')
+    with open(allure_env_path, 'w') as f:
+        data = '\n'.join([f'{variable}={value}' for variable, value in environment_properties.items()])
+        f.write(data)
