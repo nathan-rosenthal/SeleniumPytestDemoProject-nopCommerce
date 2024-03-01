@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import allure
 import pytest
@@ -9,12 +10,37 @@ from Pages.home_page import HomePage
 from Pages.search_results_page import SearchResultsPage
 
 
+# @pytest.fixture(scope="class", autouse=True)
+# def setup(request):
+#     global driver
+#     options = Options()
+#     options.add_experimental_option("detach", True)
+#     driver = webdriver.Chrome(options)
+#     request.cls.driver = driver
+#     driver.maximize_window()
+#     driver.get('https://demo.nopcommerce.com/')
+#     yield
+#     # Teardown - close browser and shutdown driver
+#     driver.quit()
+
+
 @pytest.fixture(scope="class", autouse=True)
-def setup(request):
+def setup_v2(request):
     global driver
-    options = Options()
-    options.add_experimental_option("detach", True)
-    driver = webdriver.Chrome(options)
+    # Configure remote webdriver - selenoid
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.browser_version = "120.0"
+    chrome_options.set_capability(
+        "selenoid:options",
+        {
+            "enableVNC": True,
+            "enableVideo": True,
+            "videoName": f"{datetime.now()}.mp4",
+        },
+    )
+    driver = webdriver.Remote(
+        command_executor="http://localhost:4444/wd/hub", options=chrome_options
+    )
     request.cls.driver = driver
     driver.maximize_window()
     driver.get('https://demo.nopcommerce.com/')
