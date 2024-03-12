@@ -1,6 +1,7 @@
 from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 
@@ -55,11 +56,13 @@ class BasePage:
             message = f"Clicking on element {locator} failed"
             raise Exception(message)
 
-    ## Need to refactor
-    #
-    # def select_from_dropdown_by_value(self, locator, value):
-    #     selector = self.driver.find_element(*locator)
-    #     Select(selector).select_by_value(value)
+    def select_from_dropdown_by_value(self, locator, value):
+        try:
+            selector = self.wait_for_element(locator)
+            Select(selector).select_by_value(value)
+        except Exception:
+            message = f"Selecting from dropdown {locator} failed"
+            raise Exception(message)
     #
     # def click_item_from_elements_list_by_position(self, locator, item_position):
     #     time.sleep(1)

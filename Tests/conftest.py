@@ -34,6 +34,7 @@ def setup_v2(request):
         "selenoid:options",
         {
             "enableVNC": True,
+            "enableLog": True,
             "enableVideo": True,
             "videoName": f"{datetime.now()}.mp4",
         },
@@ -53,7 +54,8 @@ def setup_v2(request):
 def page_objects():
     home_page = HomePage(driver)
     search_results_page = SearchResultsPage(driver)
-    return {"home page": home_page, "search page": search_results_page}
+    return {"home page": home_page,
+            "search page": search_results_page}
 
 
 @pytest.hookimpl()
